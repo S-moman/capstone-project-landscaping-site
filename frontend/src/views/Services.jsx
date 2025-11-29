@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import FooterNav from "./FooterNav";
-import NavBar from "./NavBar";
-import { BASE_URL } from "./App";
+import FooterNav from "../components/FooterNav";
+import NavBar from "../components/NavBar";
+import { BASE_URL } from "../components/App";
 
 export default function Services({ services }) {
   // useEffect(() => {

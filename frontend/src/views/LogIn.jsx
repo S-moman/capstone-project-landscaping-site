@@ -1,11 +1,11 @@
 import { useState, useRef } from "react";
-import FooterNav from "./FooterNav";
-import NavBar from "./NavBar";
+import FooterNav from "../components/FooterNav";
+import NavBar from "../components/NavBar";
 import { Link } from "react-router";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router";
-import { BASE_URL } from "./App";
+import { BASE_URL } from "../components/App";
 
 export default function Login({ setUser }) {
   const [email, setEmail] = useState("");

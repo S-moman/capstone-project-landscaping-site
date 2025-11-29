@@ -1,7 +1,7 @@
 import { Link } from "react-router";
-import NavBar from "./NavBar";
+import NavBar from "../components/NavBar";
 import hpImg from "../assets/hp.jpg";
-import FooterNav from "./FooterNav";
+import FooterNav from "../components/FooterNav";
 
 export default function HomePage() {
   return (
