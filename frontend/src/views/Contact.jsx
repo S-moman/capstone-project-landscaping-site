@@ -1,5 +1,5 @@
-import FooterNav from "./FooterNav";
-import NavBar from "./NavBar";
+import FooterNav from "../components/FooterNav";
+import NavBar from "../components/NavBar";
 
 export default function Contact() {
   return (
