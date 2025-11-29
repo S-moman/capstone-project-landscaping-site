@@ -1,4 +1,5 @@
 import Customers from "../models/Customers.js";
+import bcrypt from "bcryptjs";
 
 const getCustomers = async (req, res) => {
   try {
