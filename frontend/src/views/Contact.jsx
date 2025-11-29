@@ -5,7 +5,7 @@ export default function Contact() {
   return (
     <>
       <NavBar />
-      <h1>Contact Page Under Constrution...</h1>
+      <h1>Contact Page Under Construction...</h1>
       <FooterNav />
     </>
   );

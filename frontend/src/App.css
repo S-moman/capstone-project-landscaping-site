@@ -257,3 +257,16 @@ button:hover {
 /* transform: scale(1.05);   */
 
 /* } */
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  border: 3px dashed #06923e;
+  /* background-color: #d3eccd; */
+  border-radius: 10px;
+  width: 40%;
+  padding: 2rem;
+  /* box-shadow: #212121; */
+  border-radius: 5px;
+  margin: 5px;
+}
