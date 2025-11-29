@@ -1,4 +1,4 @@
-import FooterNav from "./FooterNav";
+import FooterNav from "../components/FooterNav";
 import NavBar from "../components/NavBar";
 
 export default function Careers() {
