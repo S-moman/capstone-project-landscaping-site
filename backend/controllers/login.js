@@ -7,8 +7,8 @@ const customerLogin = async (req, res) => {
       return res.status(400).json({ error: "Please fill all the fields" })
     }
     const user = await Customers.findOne({ email })
-    console.log(user)
-    if (!user || !(user.password == password)) {
+    const passwordMatch = await bcrypt.compare(password, user.password)
+    if (!passwordMatch) {
       return res.status(401).json({ error: "Invalid credentials" })
     }
     console.log("match")

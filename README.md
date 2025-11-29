@@ -32,4 +32,3 @@ If any questions, concerns, suggestions, or new ideas, please fell free to conta
 * Developer: Sean Moman
 * Email: moman7_s@yahoo.com
 
-# capstone-project-landscaping-site

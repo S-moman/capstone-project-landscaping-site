@@ -13,6 +13,9 @@ const getCustomers = async (req, res) => {
 const addCustomer = async (req, res) => {
   try {
     const customer = await Customers.create(req.body);
+    const hash = await bcrypt.hash(customer.password, 12);
+    customer.password = hash;
+    await customer.save();
     res.status(200).json(customer);
   } catch (e) {
     console.error(e.message);
