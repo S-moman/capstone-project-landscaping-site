@@ -112,7 +112,7 @@ export default function Login({ setUser }) {
           </div>
         </div>
       </main>
-      {/* <EmployeeLogin /> */}
+      <EmployeeLogin />
 
       <FooterNav />
 
