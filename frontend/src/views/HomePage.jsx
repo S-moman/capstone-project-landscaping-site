@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import NavBar from "../components/NavBar";
-import hpImg from "../assets/hp.jpg";
+import hpImg from "../assets/snowRemoval.jpg";
 import FooterNav from "../components/FooterNav";
 
 export default function HomePage() {
