@@ -1,6 +1,7 @@
 import { useEffect, useState, createContext, useContext } from "react";
 import { Routes, Route } from "react-router";
-import "../App.css";
+// import "../App.css";
+import "../index.css";
 import HomePage from "../views/HomePage";
 import Services from "../views/Services";
 import Careers from "../views/Careers";
@@ -11,6 +12,7 @@ import UserHome from "../views/UserHome";
 import Schedule from "../views/Schedule";
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
+export const EMPLOYEE_URL = import.meta.env.VITE_EMPLOYEE_URL;
 
 export const UserContext = createContext();
 
