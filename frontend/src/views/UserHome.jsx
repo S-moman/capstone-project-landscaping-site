@@ -3,58 +3,38 @@ import { useNavigate, Link } from "react-router";
 import logo from "../images/Logo.png";
 import NavBar from "../components/NavBar";
 import FooterNav from "../components/FooterNav";
+import { useState, useContext } from "react";
+import { UserContext } from "../components/App";
 
-// function UserNav() {
-//   function handleLogOut() {
-//     googleLogout();
-//     navigate("/login");
-//     console.log("Logging out...");
-//   }
-
-//   return (
-//     <nav>
-//       <Link to="/" id="nav-link">
-//         <img id="logo" src={logo} alt="M.I Logo" />
-//       </Link>
-//       <Link to="/schedule" id="nav-link">
-//         <div className="nav-bar">Schedule Service</div>
-//       </Link>
-//       <Link to="/Careers" id="nav-link">
-//         <div className="nav-bar">Join the Team</div>
-//       </Link>
-//       {/* <div className="nav-bar">Contact</div> */}
-//       <Link to="/contact" id="nav-link">
-//         <div className="nav-bar">Contact Us</div>
-//       </Link>
-//       <Link to="/login" id="nav-link">
-//         <button onClick={handleLogOut} className="login-button">
-//           Log Out
-//         </button>
-//       </Link>
-//     </nav>
-//   );
-// }
-
-export default function UserHome({ user }) {
+export default function UserHome() {
+  const user = useContext(UserContext);
+  console.log("User Context in UserHome:", user);
+  const [hide, toggleHide] = useState(true);
   const navigate = useNavigate();
-
-  //   function handleLogOut() {
-  //     googleLogout();
-  //     navigate("/login");
-  //   }
 
   function handleclick() {
     console.log("Editing...");
+    forms = document.getElementsByClassName("user-form");
+    for (let form of form) {
+      let inputs = form.getElementsByTagName("input");
+      for (let input of inputs) {
+        input.type = "text";
+      }
+    }
+    
+    
   }
 
   return (
     <>
+    <UserContext.Provider value={user}>
       <NavBar />
       <main className="user-home">
         <header className="user-home__header">
           <div className="user-home__welcome">
             <h1>
-              Welcome {user ? `${user.name.firstName}` : "User"}!
+              Welcome{" "}
+              {user ? `${user.user.name.firstName || user.given_name}` : "User"}!
             </h1>
             <p className="muted">Schedule your service today</p>
           </div>
@@ -63,17 +43,24 @@ export default function UserHome({ user }) {
           </button>
         </header>
 
-        <section className="card user-home__card" aria-labelledby="user-info-title">
-          <h2 id="user-info-title" className="card__title">Your Information</h2>
+        <section
+          className="card user-home__card"
+          aria-labelledby="user-info-title"
+        >
+          <h2 id="user-info-title" className="card__title">
+            Your Information
+          </h2>
 
           <form className="user-form" onSubmit={(e) => e.preventDefault()}>
             <div className="row">
               <label>
                 First name
                 <input
-                  type="text"
+                  type="readonly"
                   name="firstName"
-                  defaultValue={user ? user.name.firstName : ""}
+                  defaultValue={
+                    user ? user.user.name.firstName || user.given_name : ""
+                  }
                   placeholder="First name"
                 />
               </label>
@@ -81,9 +68,9 @@ export default function UserHome({ user }) {
               <label>
                 Email
                 <input
-                  type="email"
+                  type="readonly"
                   name="email"
-                  defaultValue={user ? user.email : ""}
+                  defaultValue={user ? user.user.email : ""}
                   placeholder="you@example.com"
                 />
               </label>
@@ -91,9 +78,9 @@ export default function UserHome({ user }) {
               <label>
                 Phone
                 <input
-                  type="tel"
+                  type="readonly"
                   name="phone"
-                  defaultValue={user ? user.phone : ""}
+                  defaultValue={user ? user.user.phone : ""}
                   placeholder="(555) 555-5555"
                 />
               </label>
@@ -105,9 +92,9 @@ export default function UserHome({ user }) {
                 <label>
                   Line 1
                   <input
-                    type="text"
+                    type="readonly"
                     name="addressLine1"
-                    defaultValue={user ? user.address?.addressLine1 : ""}
+                    defaultValue={user ? user.user.address?.addressLine1 : ""}
                     placeholder="Street address"
                   />
                 </label>
@@ -115,9 +102,9 @@ export default function UserHome({ user }) {
                 <label>
                   City
                   <input
-                    type="text"
+                    type="readonly"
                     name="city"
-                    defaultValue={user ? user.address?.city : ""}
+                    defaultValue={user ? user.user.address?.city : ""}
                     placeholder="City"
                   />
                 </label>
@@ -125,9 +112,9 @@ export default function UserHome({ user }) {
                 <label>
                   State
                   <input
-                    type="text"
+                    type="readonly"
                     name="state"
-                    defaultValue={user ? user.address?.state : ""}
+                    defaultValue={user ? user.user.address?.state : ""}
                     placeholder="State"
                   />
                 </label>
@@ -135,10 +122,67 @@ export default function UserHome({ user }) {
                 <label>
                   ZIP
                   <input
-                    type="text"
+                    type="readonly"
                     name="zipCode"
-                    defaultValue={user ? user.address?.zipCode : ""}
+                    defaultValue={user ? user.user.address?.zipCode : ""}
                     placeholder="ZIP"
+                  />
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset className="project">
+              <div className="row">
+              </div>
+            </fieldset>
+
+            <div className="form-actions">
+              <button type="submit" className="btn btn--secondary invisible">
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => console.log("Cancel")}
+                className="btn invisible"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </section>
+        <section></section>
+      </main>
+      <article className="user-home" >
+        <header className="user-home__header">
+          <div className="user-home__welcome">
+            <h1>
+              Your Scheduled Services{" "}
+              {user ? `${user.user.name.firstName || user.given_name}` : "User"}!
+            </h1>
+            <p className="muted">Schedule your service today</p>
+          </div>
+        </header>
+        <section
+          className="card user-home__card"
+          aria-labelledby="user-info-title"
+        >
+          <h2 id="user-info-title" className="card__title">
+            Schedule
+          </h2>
+
+          <form className="user-form" onSubmit={(e) => e.preventDefault()}>
+            <div className="row"></div>
+
+            <fieldset className="address">
+              <legend>Scheduled Sercive</legend>
+              <div className="row">
+                <label className="full">
+                  Service
+                  <input
+                    type="readonly"
+                    name="date"
+                    defaultValue={user ? user.user.projectDetails : ""}
+                    placeholder="No scheduled services"
                   />
                 </label>
               </div>
@@ -150,31 +194,32 @@ export default function UserHome({ user }) {
                 <label className="full">
                   Project description
                   <input
-                    type="text"
+                    type="readonly"
                     name="projectDetails"
-                    defaultValue={user ? user.projectDetails : ""}
-                    placeholder="Brief description of project"
+                    defaultValue={user ? user.user.projectDetails : ""}
+                    placeholder="No scheduled services"
                   />
                 </label>
 
                 <label>
-                  Start date
+                  Scheduled date
                   <input
-                    type="date"
+                    type="readonly"
                     name="projectStartDate"
-                    defaultValue={user ? user.projectStartDate : ""}
+                    defaultValue={user ? user.user.projectStartDate : ""}
+                    placeholder="No scheduled services"
                   />
                 </label>
               </div>
             </fieldset>
 
-            <div className="form-actions">
+            {/* <div className="form-actions">
               <button type="submit" className="btn btn--secondary">Save</button>
               <button type="button" onClick={() => console.log("Cancel")} className="btn">Cancel</button>
-            </div>
+            </div> */}
           </form>
         </section>
-      </main>
+      </article>
 
       <FooterNav />
 
@@ -287,6 +332,7 @@ export default function UserHome({ user }) {
           }
         }
       `}</style>
+    </UserContext.Provider>
     </>
   );
 }

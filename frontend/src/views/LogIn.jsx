@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import FooterNav from "../components/FooterNav";
 import NavBar from "../components/NavBar";
 import { Link } from "react-router";
@@ -7,8 +7,11 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router";
 import { BASE_URL } from "../components/App";
 import EmployeeLogin from "../components/EmployeeLogin";
+import { Mail, RectangleEllipsis } from "lucide-react";
+import { UserContext } from "../components/App";
 
-export default function Login({ setUser }) {
+export default function Login({ setUser, setIsLoggedIn }) {
+  const currentUser = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -17,7 +20,10 @@ export default function Login({ setUser }) {
 
   async function handleLogin(e) {
     e.preventDefault();
-    if (!email || !password) return postMessage("Please fill all the fields");
+    if (!email || !password) {
+
+      return 
+    }
     const user = {
       email: emailRef.current.value,
       password: passwordRef.current.value,
@@ -33,10 +39,12 @@ export default function Login({ setUser }) {
       const userLoggedin = await response.json();
       console.log(userLoggedin);
       if (userLoggedin.email == user.email) {
+        localStorage.setItem("token", userLoggedin.token)
         setUser(userLoggedin);
+        setIsLoggedIn(true);
         navigate("/home");
       } else {
-        return postMessage("Invalid credentials");
+        return alert("Invalid credentials");
       }
     } catch (e) {
       console.log(e.message);
@@ -47,22 +55,31 @@ export default function Login({ setUser }) {
 
   return (
     <>
+    <UserContext.Provider value={{ currentUser }}>
       <NavBar />
       <main className="login-page" aria-live="polite">
         <div className="login-wrapper">
-          <div className="login-card" role="region" aria-labelledby="login-title">
+          <div
+            className="login-card"
+            role="region"
+            aria-labelledby="login-title"
+          >
             <div className="login-card-content">
-              <h2 id="login-title" className="login-title">Sign in to your account</h2>
-              <p className="login-sub">Welcome back — please enter your details to continue.</p>
+              <h2 id="login-title" className="login-title">
+                Sign in to your account
+              </h2>
+              <p className="login-sub">
+                Welcome back — please enter your details to continue.
+              </p>
 
               <form onSubmit={handleLogin} className="login-form" noValidate>
                 <label className="form-group">
-                  <span className="form-label">Email</span>
+                  <span className="form-label">Email<Mail /></span>
                   <input
                     ref={emailRef}
                     type="email"
                     name="email"
-                    placeholder="you@example.com"
+                    placeholder="you@example.com" 
                     onChange={(e) => setEmail(e.target.value)}
                     value={email}
                     required
@@ -72,7 +89,7 @@ export default function Login({ setUser }) {
                 </label>
 
                 <label className="form-group">
-                  <span className="form-label">Password</span>
+                  <span className="form-label">Password<RectangleEllipsis /></span>
                   <input
                     ref={passwordRef}
                     type="password"
@@ -91,7 +108,11 @@ export default function Login({ setUser }) {
                   <button type="submit" className="btn btn-primary">
                     Sign In
                   </button>
-                  <Link to={"/getquote"} className="btn btn-ghost" aria-label="Create an account">
+                  <Link
+                    to={"/getquote"}
+                    className="btn btn-ghost"
+                    aria-label="Create an account"
+                  >
                     Create account
                   </Link>
                 </div>
@@ -99,20 +120,42 @@ export default function Login({ setUser }) {
                 <div className="form-footer">
                   <span className="divider">or continue with</span>
                   {/* If you enable Google login later, replace the button below with <GoogleLogin /> */}
-                  {/* <GoogleLogin
-                    onSuccess={(codeResponse) => {
+                  <GoogleLogin
+                    onSuccess={async (codeResponse) => {
                       console.log(jwtDecode(codeResponse.credential));
-                      navigate("/home");
+                      const userObject = jwtDecode(codeResponse.credential);
+                      try {
+                        const response = await fetch(`${BASE_URL}/login`, {
+                          method: "POST",
+                          body: JSON.stringify(userObject),
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                        });
+                        const userLoggedin = await response.json();
+                        console.log(userLoggedin);
+                        const { given_name, email, picture } = userObject;
+                        if (userObject.email == userLoggedin.email) {
+                          setUser(userObject);
+                          navigate("/home", { given_name, email, picture });
+                        } else {
+                          return alert("Invalid credentials");
+                        }
+                      } catch (e) {
+                        console.log(e.message);
+                      }
+                      // setUser(userObject);
+                      // navigate("/home", { given_name, email, picture });
                     }}
                     onError={() => console.log("Login failed")}
-                  /> */}
+                  />
                 </div>
               </form>
             </div>
           </div>
         </div>
       </main>
-      <EmployeeLogin />
+      <EmployeeLogin setUser={setUser}/>
 
       <FooterNav />
 
@@ -302,6 +345,7 @@ export default function Login({ setUser }) {
           }
         }
       `}</style>
+    </UserContext.Provider>
     </>
   );
 }
