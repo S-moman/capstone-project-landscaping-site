@@ -5,7 +5,8 @@ import connectDB from "./conn.js";
 import morgan from "morgan";
 import servicesRoute from "./routes/services.js";
 import userRoute from "./routes/customers.js";
-import loginRoute from "./routes/login.js";
+import cLoginRoute from "./routes/login.js";
+import employeeRoute from "./routes/employees.js";
 
 const app = express();
 
@@ -17,7 +18,9 @@ app.use(morgan("common"));
 
 app.use("/services", servicesRoute);
 app.use("/customers", userRoute);
-app.use("/login", loginRoute)
+app.use("/login", cLoginRoute)
+app.use("/employees", employeeRoute)
+
 
 app.get("/", (req, res) => {
   res.json("Hello world, we are live baby!!!");
