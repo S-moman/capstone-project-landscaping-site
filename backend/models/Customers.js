@@ -13,11 +13,12 @@ const customerSchema = mongoose.Schema({
     city: { type: String },
     state: { type: String },
     zipCode: { type: Number },
-    active: { type: Boolean },
-    createdAt: { type: Date, default: Date.now },
   },
-  projectDetails: {type: String},
-  projectStartDate: {type: Date}
+  active: { type: Boolean },
+  projectDetails: { type: String },
+  projectStartDate: { type: Date },
+  createdAt: { type: Date, default: Date.now },
+  updated: { type: Date, default: Date.now },
 });
 
 const Customers = mongoose.model("customers", customerSchema);
