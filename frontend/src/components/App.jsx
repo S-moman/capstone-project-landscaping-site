@@ -27,7 +27,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  let currentUser = { user, isLoggedIn };
+  let currentUser = { user, isLoggedIn, setUser, setIsLoggedIn };
   console.log(user ? `Current User:, ${user.name.firstName} is logged in: ${isLoggedIn}` : "No user logged in");
   const navigate = useNavigate();
 

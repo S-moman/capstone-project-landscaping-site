@@ -9,9 +9,9 @@ export default function NavBar() {
   const navigate = useNavigate();
 
   function handleLogOut() {
-    localStorage.removeItem("token");
     setUser(null);
     setIsLoggedIn(false);
+    localStorage.removeItem("token");
     console.log("Logging out...");
     navigate("/login");
   }
