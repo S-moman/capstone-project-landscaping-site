@@ -1,5 +1,5 @@
 import Customers from "../models/Customers.js";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 const getCustomers = async (req, res) => {
   try {
@@ -11,16 +11,23 @@ const getCustomers = async (req, res) => {
   }
 };
 
+// Generate JWT token
+const generateToken = (id) => {
+ return jwt.sign({id}, process.env.JWT_SECRET, { expiresIn: "1h" });
+};
+
 const addCustomer = async (req, res) => {
   try {
     const customer = await Customers.create(req.body);
     const hash = await bcrypt.hash(customer.password, 12);
     customer.password = hash;
+    const token = generateToken(customer._id);
     await customer.save();
-    res.status(200).json(customer);
+    res.status(201).json({customer, token});
+    console.log(customer.name, "Customer added successfully")
   } catch (e) {
     console.error(e.message);
-    res.status(400).json({ error: e.message });
+    res.status(400).json({ error: e.message })
   }
 };
 

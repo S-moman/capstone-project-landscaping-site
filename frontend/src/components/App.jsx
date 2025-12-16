@@ -21,19 +21,19 @@ function App() {
   const [user, setUser] = useState(null);
 
   // Fetching services
-  useEffect(() => {
-    const getSevices = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/services`);
-        const service = await response.json();
-        setServices(service);
-        console.log(service);
-      } catch (e) {
-        console.log(e.message);
-      }
-    };
-    getSevices();
-  }, []);
+  // useEffect(() => {
+  //   const getSevices = async () => {
+  //     try {
+  //       const response = await fetch(`${BASE_URL}/services`);
+  //       const service = await response.json();
+  //       setServices(service);
+  //       console.log(service);
+  //     } catch (e) {
+  //       console.log(e.message);
+  //     }
+  //   };
+  //   getSevices();
+  // }, []);
 
   // Fetching users
   // useEffect(() => {
