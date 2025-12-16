@@ -23,10 +23,10 @@ const addCustomer = async (req, res) => {
     customer.password = hash;
     const token = generateToken(customer._id);
     await customer.save();
-    res.status(201).json({customer, token});
+    res.status(201).json({customer});
     console.log(customer.name, "Customer added successfully")
   } catch (e) {
-    console.error(e.message);
+    console.log(e.message);
     res.status(400).json({ error: e.message })
   }
 };

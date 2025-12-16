@@ -118,9 +118,9 @@ export default function Login({ setUser, setIsLoggedIn }) {
                 </div>
 
                 <div className="form-footer">
-                  <span className="divider">or continue with</span>
+                  {/* <span className="divider">or continue with</span> */}
                   {/* If you enable Google login later, replace the button below with <GoogleLogin /> */}
-                  <GoogleLogin
+                  {/* <GoogleLogin
                     onSuccess={async (codeResponse) => {
                       console.log(jwtDecode(codeResponse.credential));
                       const userObject = jwtDecode(codeResponse.credential);
@@ -148,7 +148,7 @@ export default function Login({ setUser, setIsLoggedIn }) {
                       // navigate("/home", { given_name, email, picture });
                     }}
                     onError={() => console.log("Login failed")}
-                  />
+                  /> */}
                 </div>
               </form>
             </div>
