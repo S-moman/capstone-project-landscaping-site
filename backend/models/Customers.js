@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Customer Schema
 const customerSchema = mongoose.Schema({
   name: {
     firstName: { type: String, required: true },

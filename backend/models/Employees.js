@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Employee Schema
 const employeeSchema = mongoose.Schema({
   name: {
     firstName: { type: String, required: true },
@@ -8,7 +9,11 @@ const employeeSchema = mongoose.Schema({
   phone: { type: Number, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  position: { type: String },
+  position: {
+    type: String,
+    enum: ["Admin", "Manager", "Employee"],
+    required: true,
+  },
   active: { type: Boolean },
   hireDate: { type: Date },
   createdAt: { type: Date, default: Date.now },

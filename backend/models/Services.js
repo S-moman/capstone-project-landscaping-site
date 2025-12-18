@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Service Schema
 const servicesSchema = mongoose.Schema({
   serviceType: {
     type: String,
