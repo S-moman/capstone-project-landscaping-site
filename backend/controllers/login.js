@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 
+// Customer login controller
 const customerLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -12,6 +13,7 @@ const customerLogin = async (req, res) => {
     }
     const user = await Customers.findOne({ email });
     const passwordMatch = await bcrypt.compare(password, user.password);
+
     if (!passwordMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -26,13 +28,14 @@ const customerLogin = async (req, res) => {
       projectStartDate: user.projectStartDate,
       token,
     });
-    console.log(user.name, "access granted");
+    console.log(user.name, "Signing in...");
   } catch (e) {
-    console.log(e.message);
+    console.error(e.message);
     res.status(400).json({ error: e.message });
   }
 };
 
+// Employee login controller
 const employeeLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -40,7 +43,7 @@ const employeeLogin = async (req, res) => {
       return res.status(400).json({ error: "Please fill all the fields" });
     }
     const user = await Employees.findOne({ email });
-    
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -54,9 +57,10 @@ const employeeLogin = async (req, res) => {
         address: user.address,
         position: user.position,
         hireDate: user.hireDate,
+        active: user.active,
         token,
       });
-      console.log("access granted");
+      console.log(user.name, "Signing in...");
     }
   } catch (e) {
     console.error(e.message);
@@ -64,6 +68,7 @@ const employeeLogin = async (req, res) => {
   }
 };
 
+// Google login controller
 const googleLogin = async (req, res) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:5173/login");
   res.header("Referrer-Policy", "no-referrer-when-downgrade");
@@ -87,7 +92,7 @@ const userLogged = async (req, res) => {
 
 // Generate JWT token
 const generateToken = (id) => {
-  return jwt.sign({id}, process.env.JWT_SECRET, { expiresIn: "1h" });
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 };
 
 export default {

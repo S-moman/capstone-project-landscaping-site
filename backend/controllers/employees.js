@@ -2,6 +2,7 @@ import Employees from "../models/Employees.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+// Get all employees
 const getEmployees = async (req, res) => {
   try {
     const employees = await Employees.find({});
@@ -35,12 +36,14 @@ const registerEmployee = async (req, res) => {
 
     res.status(201).json({ employee, token });
     console.log(employee.name,"created successfully");
+    
   } catch (e) {
     res.status(500).json({ error: e.message });
-    console.error(e.message);
+    console.log(e.message);
   }
 };
 
+// Delete employee by id
 const deleteEmployee = async (req, res) => {
   try {
     const newEmployees = await Employees.findByIdAndDelete(req.params.id);

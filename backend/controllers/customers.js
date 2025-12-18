@@ -1,6 +1,8 @@
 import Customers from "../models/Customers.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
+// Get all customers
 const getCustomers = async (req, res) => {
   try {
     const customers = await Customers.find({});
@@ -11,26 +13,31 @@ const getCustomers = async (req, res) => {
   }
 };
 
-// Generate JWT token
-const generateToken = (id) => {
- return jwt.sign({id}, process.env.JWT_SECRET, { expiresIn: "1h" });
-};
-
+// Add a new customer
 const addCustomer = async (req, res) => {
   try {
+    // Create a new customer
     const customer = await Customers.create(req.body);
-    const hash = await bcrypt.hash(customer.password, 12);
+    // Salt rounds for bcrypt
+    const salt = bcrypt.genSaltSync(12);
+    // Hash the password
+    const hash = await bcrypt.hash(customer.password, salt);
     customer.password = hash;
+    // Generate token
     const token = generateToken(customer._id);
+    // Save the customer
     await customer.save();
-    res.status(201).json({customer});
-    console.log(customer.name, "Customer added successfully")
+
+    res.status(201).json({ customer, token });
+    console.log(customer.name, "Customer added successfully");
+
   } catch (e) {
+    res.status(500).json({ error: e.message });
     console.log(e.message);
-    res.status(400).json({ error: e.message })
   }
 };
 
+// Delete a customer by id
 const deleteCustomer = async (req, res) => {
   try {
     const newCustomers = await Customers.findByIdAndDelete(req.params.id);
@@ -42,11 +49,10 @@ const deleteCustomer = async (req, res) => {
   }
 };
 
+// Get customer by id
 const getCustomerById = async (req, res) => {
   try {
-    const updatedCustomer = await Customers.findById(
-      { _id: req.params.id }
-    );
+    const updatedCustomer = await Customers.findById({ _id: req.params.id });
     res.status(200).json(updatedCustomer);
   } catch (e) {
     console.error(e.message);
@@ -54,11 +60,10 @@ const getCustomerById = async (req, res) => {
   }
 };
 
+// Find customer by email
 const getCustomerByEmail = async (req, res) => {
   try {
-    const customer = await Customers.find(
-      { email: req.params.email }
-    );
+    const customer = await Customers.find({ email: req.params.email });
     res.status(200).json(customer);
   } catch (e) {
     console.error(e.message);
@@ -66,7 +71,7 @@ const getCustomerByEmail = async (req, res) => {
   }
 };
 
-
+// Update customer by id
 const updateCustomerById = async (req, res) => {
   try {
     const updatedCustomer = await Customers.findByIdAndUpdate(
@@ -80,6 +85,7 @@ const updateCustomerById = async (req, res) => {
   }
 };
 
+// Update customer by email
 const updateCustomerByEmail = async (req, res) => {
   try {
     const updatedCustomer = await Customers.find(
@@ -93,8 +99,10 @@ const updateCustomerByEmail = async (req, res) => {
   }
 };
 
-
-
+// Generate JWT token
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+};
 
 export default {
   getCustomers,

@@ -1,5 +1,6 @@
 import Services from "../models/Services.js";
 
+// Get all services
 const getServices = async (req, res) => {
   try {
     const services = await Services.find({});
@@ -10,6 +11,7 @@ const getServices = async (req, res) => {
   }
 };
 
+// Add new service
 const addService = async (req, res) => {
   try {
     const service = await Services.create(req.body);
@@ -21,6 +23,7 @@ const addService = async (req, res) => {
   }
 };
 
+// Remove service
 const removeService = async (req, res) => {
   try {
     const newServices = await Services.findByIdAndDelete(req.params.id);
@@ -32,6 +35,7 @@ const removeService = async (req, res) => {
   }
 };
 
+// Update service
 const updateService = async (req, res) => {
   try {
     const updatedService = await Services.findByIdAndUpdate(
