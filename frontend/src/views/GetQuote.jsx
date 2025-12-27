@@ -1,10 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import FooterNav from "../components/FooterNav";
-import NavBar from "../components/NavBar";
+import { useEffect, useRef, useState, useContext } from "react";
+
 import { BASE_URL } from "../components/App";
 import { Link } from "react-router";
+import { useNavigate } from "react-router";
+import { UserProvider, UserContext } from "../context/UserProvider";
 
 export default function GetQuote() {
+  const user = useContext(UserContext);
   const [customers, setCustomers] = useState([]);
   const firstNameRef = useRef(null);
   const lastNameRef = useRef(null);
@@ -19,6 +21,7 @@ export default function GetQuote() {
   const zipCodeRef = useRef(null);
   const projectRef = useRef(null);
   const startDateRef = useRef(null);
+  const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -48,8 +51,10 @@ export default function GetQuote() {
         },
       });
       const newCustomer = await response.json();
-      console.log(newCustomer);
+      console.log(newCustomer, "New customer created");
       setCustomers([...customers, newCustomer]);
+      alert("Quote request submitted successfully!");
+      navigate("/login");
     } catch (e) {
       console.log(e.message);
     }
@@ -70,226 +75,246 @@ export default function GetQuote() {
 
   return (
     <>
-      <NavBar />
-      <main className="quote-page container" aria-labelledby="get-quote-heading">
-        <section className="quote-card card" aria-labelledby="get-quote-heading">
-          <header className="quote-card__header card__header">
-            <h1 id="get-quote-heading" className="card__title">
-              Get a Free Quote
-            </h1>
-            <p id="get-quote-sub" className="card__subtitle">
-              Tell us about your project and we'll get back to you with a custom estimate.
-            </p>
-          </header>
-
-          <form
-            className="quote-form card__body"
-            onSubmit={handleSubmit}
-            noValidate
-            aria-describedby="get-quote-sub"
+      <UserProvider value={user}>
+        <main
+          className="quote-page container"
+          aria-labelledby="get-quote-heading"
+        >
+          <section
+            className="quote-card card"
+            aria-labelledby="get-quote-heading"
           >
-            <fieldset className="form-section">
-              <legend className="form-section__title">Contact information</legend>
+            <header className="quote-card__header card__header">
+              <h1 id="get-quote-heading" className="card__title">
+                Get a Free Quote
+              </h1>
+              <p id="get-quote-sub" className="card__subtitle">
+                Tell us about your project and we'll get back to you with a
+                custom estimate.
+              </p>
+            </header>
 
-              <div className="form-grid">
-                <div className="form-group">
-                  <label htmlFor="firstName">First name</label>
-                  <input
-                    ref={firstNameRef}
-                    id="firstName"
-                    name="firstName"
-                    type="text"
-                    placeholder="Jane"
-                    required
-                    className="input"
-                    aria-required="true"
-                  />
-                </div>
+            <form
+              className="quote-form card__body"
+              onSubmit={handleSubmit}
+              noValidate
+              aria-describedby="get-quote-sub"
+            >
+              <fieldset className="form-section">
+                <legend className="form-section__title">
+                  Contact information
+                </legend>
 
-                <div className="form-group">
-                  <label htmlFor="lastName">Last name</label>
-                  <input
-                    ref={lastNameRef}
-                    id="lastName"
-                    name="lastName"
-                    type="text"
-                    placeholder="Doe"
-                    required
-                    className="input"
-                    aria-required="true"
-                  />
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label htmlFor="firstName">First name</label>
+                    <input
+                      ref={firstNameRef}
+                      id="firstName"
+                      name="firstName"
+                      type="text"
+                      placeholder="Jane"
+                      required
+                      className="input"
+                      aria-required="true"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="lastName">Last name</label>
+                    <input
+                      ref={lastNameRef}
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      placeholder="Doe"
+                      required
+                      className="input"
+                      aria-required="true"
+                    />
+                  </div>
+
+                  <div className="form-group full-width">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      ref={emailRef}
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="you@example.com"
+                      required
+                      className="input"
+                      aria-describedby="email-help"
+                    />
+                    <small id="email-help" className="form-help">
+                      We'll only use this to contact you about your quote &
+                      invoices.
+                    </small>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="confirmEmail">Confirm email</label>
+                    <input
+                      ref={cEmailRef}
+                      id="confirmEmail"
+                      name="confirmEmail"
+                      type="email"
+                      placeholder="you@example.com"
+                      required
+                      className="input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input
+                      ref={passwordRef}
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Create a password"
+                      required
+                      minLength={8}
+                      className="input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="confirmPassword">Confirm password</label>
+                    <input
+                      ref={cPasswordRef}
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="Confirm your password"
+                      required
+                      minLength={8}
+                      className="input"
+                    />
+                  </div>
+
+                  <div className="form-group full-width">
+                    <label htmlFor="phone">Phone</label>
+                    <input
+                      ref={phoneRef}
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="(412) 555-5555"
+                      pattern="[\d\(\)\-\s]+"
+                      className="input"
+                      aria-label="Phone number"
+                    />
+                  </div>
                 </div>
+              </fieldset>
+
+              <fieldset className="form-section">
+                <legend className="form-section__title">Address</legend>
+
+                <div className="form-grid">
+                  <div className="form-group full-width">
+                    <label htmlFor="streetAddress">Street address</label>
+                    <input
+                      ref={addressLine1Ref}
+                      id="streetAddress"
+                      name="addressLine1"
+                      type="text"
+                      placeholder="123 Main St."
+                      className="input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="city">City</label>
+                    <input
+                      ref={cityRef}
+                      id="city"
+                      name="city"
+                      type="text"
+                      placeholder="Pittsburgh"
+                      className="input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="state">State</label>
+                    <input
+                      ref={stateRef}
+                      id="state"
+                      name="state"
+                      type="text"
+                      placeholder="PA"
+                      maxLength={2}
+                      className="input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="zipCode">Zip code</label>
+                    <input
+                      ref={zipCodeRef}
+                      id="zipCode"
+                      name="zipCode"
+                      type="text"
+                      placeholder="15213"
+                      pattern="\d{5}(-\d{4})?"
+                      className="input"
+                    />
+                  </div>
+                </div>
+              </fieldset>
+
+              <fieldset className="form-section">
+                <legend className="form-section__title">Project details</legend>
 
                 <div className="form-group full-width">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    ref={emailRef}
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    required
-                    className="input"
-                    aria-describedby="email-help"
-                  />
-                  <small id="email-help" className="form-help">
-                    We'll only use this to contact you about your quote & invoices.
-                  </small>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="confirmEmail">Confirm email</label>
-                  <input
-                    ref={cEmailRef}
-                    id="confirmEmail"
-                    name="confirmEmail"
-                    type="email"
-                    placeholder="you@example.com"
-                    required
-                    className="input"
+                  <label htmlFor="project-details">
+                    Tell us about your project
+                  </label>
+                  <textarea
+                    ref={projectRef}
+                    id="project-details"
+                    name="projectDetails"
+                    rows={4}
+                    placeholder="Describe the work you'd like done (lawn, hardscaping, planting, timeline, budget, etc.)"
+                    className="textarea"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="password">Password</label>
-                  <input
-                    ref={passwordRef}
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Create a password"
-                    required
-                    minLength={8}
-                    className="input"
-                  />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="date">Target start date</label>
+                    <input
+                      ref={startDateRef}
+                      id="date"
+                      name="startDate"
+                      type="date"
+                      className="input"
+                    />
+                  </div>
                 </div>
+              </fieldset>
 
-                <div className="form-group">
-                  <label htmlFor="confirmPassword">Confirm password</label>
-                  <input
-                    ref={cPasswordRef}
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm your password"
-                    required
-                    minLength={8}
-                    className="input"
-                  />
-                </div>
+              <div className="form-actions">
+                <button type="submit" className="button button--primary">
+                  Request Quote
+                </button>
 
-                <div className="form-group full-width">
-                  <label htmlFor="phone">Phone</label>
-                  <input
-                    ref={phoneRef}
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    inputMode="tel"
-                    placeholder="(412) 555-5555"
-                    pattern="[\d\(\)\-\s]+"
-                    className="input"
-                    aria-label="Phone number"
-                  />
-                </div>
+                <Link
+                  to={"/login"}
+                  id="login-link"
+                  className="button button--link"
+                >
+                  Already have an account? Log in
+                </Link>
               </div>
-            </fieldset>
+            </form>
+          </section>
+        </main>
 
-            <fieldset className="form-section">
-              <legend className="form-section__title">Address</legend>
-
-              <div className="form-grid">
-                <div className="form-group full-width">
-                  <label htmlFor="streetAddress">Street address</label>
-                  <input
-                    ref={addressLine1Ref}
-                    id="streetAddress"
-                    name="addressLine1"
-                    type="text"
-                    placeholder="123 Main St."
-                    className="input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="city">City</label>
-                  <input
-                    ref={cityRef}
-                    id="city"
-                    name="city"
-                    type="text"
-                    placeholder="Pittsburgh"
-                    className="input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="state">State</label>
-                  <input
-                    ref={stateRef}
-                    id="state"
-                    name="state"
-                    type="text"
-                    placeholder="PA"
-                    maxLength={2}
-                    className="input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="zipCode">Zip code</label>
-                  <input
-                    ref={zipCodeRef}
-                    id="zipCode"
-                    name="zipCode"
-                    type="text"
-                    placeholder="15213"
-                    pattern="\d{5}(-\d{4})?"
-                    className="input"
-                  />
-                </div>
-              </div>
-            </fieldset>
-
-            <fieldset className="form-section">
-              <legend className="form-section__title">Project details</legend>
-
-              <div className="form-group full-width">
-                <label htmlFor="project-details">Tell us about your project</label>
-                <textarea
-                  ref={projectRef}
-                  id="project-details"
-                  name="projectDetails"
-                  rows={4}
-                  placeholder="Describe the work you'd like done (lawn, hardscaping, planting, timeline, budget, etc.)"
-                  className="textarea"
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="date">Target start date</label>
-                  <input ref={startDateRef} id="date" name="startDate" type="date" className="input" />
-                </div>
-              </div>
-            </fieldset>
-
-            <div className="form-actions">
-              <button type="submit" className="button button--primary">
-                Request Quote
-              </button>
-
-              <Link to={"/login"} id="login-link" className="button button--link">
-                Already have an account? Log in
-              </Link>
-            </div>
-          </form>
-        </section>
-      </main>
-
-      <FooterNav />
-
-      <style>{`
+        <style>{`
         /* Layout */
         .quote-page.container {
           display: flex;
@@ -468,6 +493,7 @@ export default function GetQuote() {
           }
         }
       `}</style>
+      </UserProvider>
     </>
   );
 }

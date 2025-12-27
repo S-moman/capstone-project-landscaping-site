@@ -10,41 +10,61 @@ import LogIn from "../views/LogIn";
 import Contact from "../views/Contact";
 import UserHome from "../views/UserHome";
 import Schedule from "../views/Schedule";
+import EmployeeHome from "../views/EmployeeHome";
+import NavBar from "./NavBar";
+import FooterNav from "./FooterNav";
+import { UserProvider, UserContext } from "../context/UserProvider";
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
 export const EMPLOYEE_URL = import.meta.env.VITE_EMPLOYEE_URL;
 
-export const UserContext = createContext();
+// Create UserContext
+// export const UserContext = createContext();
 
 // export function useUser() {
 //   return useContext(UserContext);
 // }
 
 function App() {
+  const currentUser = useContext(UserContext);
   const [services, setServices] = useState([]);
-  const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  let currentUser = { user, isLoggedIn, setUser, setIsLoggedIn };
-  console.log(user ? `Current User:, ${user.name.firstName} is logged in: ${isLoggedIn}` : "No user logged in");
+  // const [customer, setCustomer] = useState(null);
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [employee, setEmployee] = useState(null);
+  // let currentUser = {
+  //   customer,
+  //   employee,
+  //   isLoggedIn,
+  //   setEmployee,
+  //   setCustomer,
+  //   setIsLoggedIn,
+  // };
+  console.log(
+    currentUser.isLoggedIn
+      ? `Current User:, ${currentUser} logged in: ${currentUser.isLoggedIn}`
+      : "No user logged in"
+  );
   const navigate = useNavigate();
 
   // Fetching services
-  // useEffect(() => {
-  //   const getSevices = async () => {
-  //     try {
-  //       const response = await fetch(`${BASE_URL}/services`);
-  //       const service = await response.json();
-  //       setServices(service);
-  //       console.log(service);
-  //     } catch (e) {
-  //       console.log(e.message);
-  //     }
-  //   };
-  //   getSevices();
-  // }, []);
+  {
+    /*} useEffect(() => {
+    const getSevices = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/services`);
+        const service = await response.json();
+        setServices(service);
+        console.log(service);
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    getSevices();
+  }, []); */
+  }
 
   // Fetching users
   useEffect(() => {
@@ -61,7 +81,7 @@ function App() {
           });
           const res = await response.json();
           console.log(res);
-          setUser(res);
+          setEmployee(res);
         } catch (e) {
           console.log(e.message);
           localStorage.removeItem("token");
@@ -82,29 +102,37 @@ function App() {
 
   return (
     <>
-      <UserContext.Provider value={currentUser}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route
-            path="/services"
-            element={
-              <Services
-                services={services}
-                loading={loading}
-                setLoading={setLoading}
-                error={error}
-                setError={setError}
-              />
-            }
-          />
-          <Route path="/careers" element={<Careers />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/getquote" element={<GetQuote setUser={setUser}/>} />
-          <Route path="/login" element={<LogIn setUser={setUser} setIsLoggedIn={setIsLoggedIn} />} />
-          <Route path="/home" element={!currentUser ? <LogIn /> : <UserHome />} />
-          <Route path="/schedule" element={<Schedule  services={services} />} />
-        </Routes>
-      </UserContext.Provider>
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route
+          path="/services"
+          element={
+            <Services
+              services={services}
+              loading={loading}
+              setLoading={setLoading}
+              error={error}
+              setError={setError}
+            />
+          }
+        />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/getquote" element={<GetQuote />} />
+        <Route path="/login" element={<LogIn />} />
+        <Route
+          path="/home"
+          element={!currentUser.isLoggedIn ? <LogIn /> : <UserHome />}
+        />
+        <Route path="/schedule" element={<Schedule services={services} />} />
+        <Route
+          path="/employee"
+          element={!currentUser.isLoggedIn ? <LogIn /> : <EmployeeHome />}
+        />
+        <Route path="*" element={<HomePage />} />
+      </Routes>
+      <FooterNav />
     </>
   );
 }

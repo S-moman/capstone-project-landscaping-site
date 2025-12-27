@@ -1,28 +1,26 @@
 import { useState, useRef, useContext } from "react";
-import FooterNav from "../components/FooterNav";
-import NavBar from "../components/NavBar";
+
 import { Link } from "react-router";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+
 import { useNavigate } from "react-router";
 import { BASE_URL } from "../components/App";
 import EmployeeLogin from "../components/EmployeeLogin";
 import { Mail, RectangleEllipsis } from "lucide-react";
-import { UserContext } from "../components/App";
+import useAuth from "../hooks/useAuth";
 
-export default function Login({ setUser, setIsLoggedIn }) {
-  const currentUser = useContext(UserContext);
+export default function Login() {
+  const { setCustomer, setIsLoggedIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
 
+  // Customer login function
   async function handleLogin(e) {
     e.preventDefault();
     if (!email || !password) {
-
-      return 
+      return alert("Please fill all the fields");
     }
     const user = {
       email: emailRef.current.value,
@@ -37,11 +35,11 @@ export default function Login({ setUser, setIsLoggedIn }) {
         },
       });
       const userLoggedin = await response.json();
-      console.log(userLoggedin);
       if (userLoggedin.email == user.email) {
-        localStorage.setItem("token", userLoggedin.token)
-        setUser(userLoggedin);
+        setCustomer(userLoggedin);
         setIsLoggedIn(true);
+        window.localStorage.setItem("token", userLoggedin.token);
+        console.log(userLoggedin.name, "Signing in...")
         navigate("/home");
       } else {
         return alert("Invalid credentials");
@@ -55,111 +53,112 @@ export default function Login({ setUser, setIsLoggedIn }) {
 
   return (
     <>
-    <UserContext.Provider value={{ currentUser }}>
-      <NavBar />
-      <main className="login-page" aria-live="polite">
-        <div className="login-wrapper">
-          <div
-            className="login-card"
-            role="region"
-            aria-labelledby="login-title"
-          >
-            <div className="login-card-content">
-              <h2 id="login-title" className="login-title">
-                Sign in to your account
-              </h2>
-              <p className="login-sub">
-                Welcome back — please enter your details to continue.
-              </p>
+      {/* <UserProvider value={customer.customer}> */}
+        <main className="login-page" aria-live="polite">
+          <div className="login-wrapper">
+            <div
+              className="login-card"
+              role="region"
+              aria-labelledby="login-title"
+            >
+              <div className="login-card-content">
+                <h2 id="login-title" className="login-title">
+                  Sign in to your account
+                </h2>
+                <p className="login-sub">
+                  Welcome back — please enter your details to continue.
+                </p>
 
-              <form onSubmit={handleLogin} className="login-form" noValidate>
-                <label className="form-group">
-                  <span className="form-label">Email<Mail /></span>
-                  <input
-                    ref={emailRef}
-                    type="email"
-                    name="email"
-                    placeholder="you@example.com" 
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    required
-                    className="form-input"
-                    aria-required="true"
-                  />
-                </label>
+                <form onSubmit={handleLogin} className="login-form" noValidate>
+                  <label className="form-group">
+                    <span className="form-label">
+                      Email
+                      <Mail />
+                    </span>
+                    <input
+                      ref={emailRef}
+                      type="email"
+                      placeholder="you@example.com"
+                      onChange={(e) => setEmail(e.target.value)}
+                      value={email}
+                      required
+                      className="form-input"
+                      aria-required="true"
+                    />
+                  </label>
 
-                <label className="form-group">
-                  <span className="form-label">Password<RectangleEllipsis /></span>
-                  <input
-                    ref={passwordRef}
-                    type="password"
-                    name="password"
-                    placeholder="••••••••"
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                    required
-                    minLength={6}
-                    className="form-input"
-                    aria-required="true"
-                  />
-                </label>
+                  <label className="form-group">
+                    <span className="form-label">
+                      Password
+                      <RectangleEllipsis />
+                    </span>
+                    <input
+                      ref={passwordRef}
+                      type="password"
+                      placeholder="••••••••"
+                      onChange={(e) => setPassword(e.target.value)}
+                      value={password}
+                      required
+                      // minLength={6}
+                      className="form-input"
+                      aria-required="true"
+                    />
+                  </label>
 
-                <div className="form-actions">
-                  <button type="submit" className="btn btn-primary">
-                    Sign In
-                  </button>
-                  <Link
-                    to={"/getquote"}
-                    className="btn btn-ghost"
-                    aria-label="Create an account"
-                  >
-                    Create account
-                  </Link>
-                </div>
+                  <div className="form-actions">
+                    <button type="submit" className="btn btn-primary">
+                      Sign In
+                    </button>
+                    <Link
+                      to={"/getquote"}
+                      className="btn btn-ghost"
+                      aria-label="Create an account"
+                    >
+                      Create account
+                    </Link>
+                  </div>
 
-                <div className="form-footer">
-                  {/* <span className="divider">or continue with</span> */}
-                  {/* If you enable Google login later, replace the button below with <GoogleLogin /> */}
-                  {/* <GoogleLogin
-                    onSuccess={async (codeResponse) => {
-                      console.log(jwtDecode(codeResponse.credential));
-                      const userObject = jwtDecode(codeResponse.credential);
-                      try {
-                        const response = await fetch(`${BASE_URL}/login`, {
-                          method: "POST",
-                          body: JSON.stringify(userObject),
-                          headers: {
-                            "Content-Type": "application/json",
-                          },
-                        });
-                        const userLoggedin = await response.json();
-                        console.log(userLoggedin);
-                        const { given_name, email, picture } = userObject;
-                        if (userObject.email == userLoggedin.email) {
-                          setUser(userObject);
-                          navigate("/home", { given_name, email, picture });
-                        } else {
-                          return alert("Invalid credentials");
+                  <div className="form-footer">
+                    <span className="divider">or continue with</span>
+                    {/* If you enable Google login later, replace the button below with <GoogleLogin /> */}
+                    {/* <GoogleLogin
+                      onSuccess={async (codeResponse) => {
+                        console.log(jwtDecode(codeResponse.credential));
+                        const userObject = jwtDecode(codeResponse.credential);
+                        try {
+                          const response = await fetch(`${BASE_URL}/login`, {
+                            method: "POST",
+                            body: JSON.stringify(userObject),
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                          });
+                          const userLoggedin = await response.json();
+                          console.log(userLoggedin);
+                          const { given_name, email, picture } = userObject;
+                          if (userObject.email == userLoggedin.email) {
+                            setUser(userObject);
+                            navigate("/home", { given_name, email, picture });
+                          } else {
+                            return alert("Invalid credentials");
+                          }
+                        } catch (e) {
+                          console.log(e.message);
                         }
-                      } catch (e) {
-                        console.log(e.message);
-                      }
-                      // setUser(userObject);
-                      // navigate("/home", { given_name, email, picture });
-                    }}
-                    onError={() => console.log("Login failed")}
-                  /> */}
-                </div>
-              </form>
+                        // setUser(userObject);
+                        // navigate("/home", { given_name, email, picture });
+                      }}
+                      onError={() => console.log("Login failed")}
+                    /> */}
+                  </div>
+                </form>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
-      <EmployeeLogin setUser={setUser}/>
+        </main>
+        <EmployeeLogin />
 
-      <FooterNav />
-
-      <style>{`
+        <style>{`
         :root{
           --bg-1: #f6f9ff;
           --card-bg: #ffffff;
@@ -345,7 +344,7 @@ export default function Login({ setUser, setIsLoggedIn }) {
           }
         }
       `}</style>
-    </UserContext.Provider>
+      {/* </UserProvider> */}
     </>
   );
 }

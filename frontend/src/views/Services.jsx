@@ -1,14 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import FooterNav from "../components/FooterNav";
 import NavBar from "../components/NavBar";
 import { BASE_URL } from "../components/App";
+import { UserProvider, UserContext } from "../context/UserProvider";
+import Schedule from "./Schedule";
 
-export default function Services({ services }) {
+
+export default function Services({ services, loading, setLoading, error, setError }) {
+  const user = useContext(UserContext);
   const [servicesState, setServicesState] = useState(
     Array.isArray(services) && services.length ? services : []
   );
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
 
   useEffect(() => {
     // If parent provided services, use them; otherwise fetch from the API
@@ -54,14 +58,18 @@ export default function Services({ services }) {
   //   };
   //   getSevices();
   // }, []);
-  function handleClick() {
+  function handleClick(e) {
+    e.preventDefault()
+    console.log("Scheduling...");
     
   }
 
   return (
     <>
-      <NavBar />
-      <main className="services-page" aria-live="polite">
+    <UserProvider value={user}>
+      {/* <NavBar /> */}
+      {user.isLoggedIn ? <Schedule/> : null}
+      <main className="services-page min-h-screen" aria-live="polite">
         <header className="services-hero" style={{ padding: "2rem 1rem", textAlign: "center" }}>
           <h1 style={{ margin: 0, fontSize: "clamp(1.5rem, 3vw, 2.5rem)" }}>Our Services</h1>
           <p style={{ marginTop: "0.5rem", color: "#555", maxWidth: 800, marginLeft: "auto", marginRight: "auto" }}>
@@ -122,7 +130,7 @@ export default function Services({ services }) {
                 <article
                   key={service._id}
                   className="service-card"
-                  onClick={navigateToDetail}
+                  onClick={handleClick}
                   onKeyDown={(e) => { if (e.key === "Enter") navigateToDetail(); }}
                   role="button"
                   tabIndex={0}
@@ -165,7 +173,7 @@ export default function Services({ services }) {
                     <button
                       type="button"
                       className="service-cta"
-                      onClick={(e) => { e.stopPropagation(); navigateToDetail(); }}
+                      onClick={handleClick}
                       style={{
                         background: "linear-gradient(90deg,#2b6cb0,#2c5282)",
                         color: "#fff",
@@ -176,7 +184,7 @@ export default function Services({ services }) {
                         fontWeight: 600,
                       }}
                     >
-                      Learn more
+                      Click to Schedule
                     </button>
                   </div>
                 </article>
@@ -186,7 +194,8 @@ export default function Services({ services }) {
         )}
 
       </main>
-      <FooterNav />
+      {/* <FooterNav /> */}
+      </UserProvider> 
     </>
   );
 }

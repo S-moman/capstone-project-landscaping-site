@@ -4,7 +4,7 @@ import logo from "../images/Logo.png";
 import NavBar from "../components/NavBar";
 import FooterNav from "../components/FooterNav";
 import { useState, useContext } from "react";
-import { UserContext } from "../components/App";
+import { UserProvider, UserContext } from "../context/UserProvider";
 
 export default function UserHome() {
   const user = useContext(UserContext);
@@ -21,209 +21,216 @@ export default function UserHome() {
         input.type = "text";
       }
     }
-    
-    
   }
 
   return (
     <>
-    <UserContext.Provider value={user}>
-      <NavBar />
-      <main className="user-home">
-        <header className="user-home__header">
-          <div className="user-home__welcome">
-            <h1>
-              Welcome{" "}
-              {user ? `${user.user.name.firstName || user.given_name}` : "User"}!
-            </h1>
-            <p className="muted">Schedule your service today</p>
-          </div>
-          <button onClick={handleclick} className="btn btn--primary">
-            Edit
-          </button>
-        </header>
-
-        <section
-          className="card user-home__card"
-          aria-labelledby="user-info-title"
-        >
-          <h2 id="user-info-title" className="card__title">
-            Your Information
-          </h2>
-
-          <form className="user-form" onSubmit={(e) => e.preventDefault()}>
-            <div className="row">
-              <label>
-                First name
-                <input
-                  type="readonly"
-                  name="firstName"
-                  defaultValue={
-                    user ? user.user.name.firstName || user.given_name : ""
-                  }
-                  placeholder="First name"
-                />
-              </label>
-
-              <label>
-                Email
-                <input
-                  type="readonly"
-                  name="email"
-                  defaultValue={user ? user.user.email : ""}
-                  placeholder="you@example.com"
-                />
-              </label>
-
-              <label>
-                Phone
-                <input
-                  type="readonly"
-                  name="phone"
-                  defaultValue={user ? user.user.phone : ""}
-                  placeholder="(555) 555-5555"
-                />
-              </label>
+      <UserProvider value={user}>
+        {/* <NavBar /> */}
+        <main className="user-home">
+          <header className="user-home__header">
+            <div className="user-home__welcome">
+              <h1>
+                Welcome{" "}
+                {user.isLoggedIn
+                  ? `${user.customer.name.firstName || user.given_name}`
+                  : "User"}
+                !
+              </h1>
+              <p className="muted">Schedule your service today</p>
             </div>
+            <button onClick={handleclick} className="btn btn--primary">
+              Edit
+            </button>
+          </header>
 
-            <fieldset className="address">
-              <legend>Address</legend>
+          <section
+            className="card user-home__card"
+            aria-labelledby="user-info-title"
+          >
+            <h2 id="user-info-title" className="card__title">
+              Your Information
+            </h2>
+
+            <form className="user-form" onSubmit={(e) => e.preventDefault()}>
               <div className="row">
                 <label>
-                  Line 1
+                  First name
                   <input
                     type="readonly"
-                    name="addressLine1"
-                    defaultValue={user ? user.user.address?.addressLine1 : ""}
-                    placeholder="Street address"
+                    name="firstName"
+                    defaultValue={
+                      user.isLoggedIn
+                        ? user.customer.name.firstName || user.given_name
+                        : ""
+                    }
+                    placeholder="First name"
                   />
                 </label>
 
                 <label>
-                  City
+                  Email
                   <input
                     type="readonly"
-                    name="city"
-                    defaultValue={user ? user.user.address?.city : ""}
-                    placeholder="City"
+                    name="email"
+                    defaultValue={user.isLoggedIn ? user.customer.email : ""}
+                    placeholder="you@example.com"
                   />
                 </label>
 
                 <label>
-                  State
+                  Phone
                   <input
                     type="readonly"
-                    name="state"
-                    defaultValue={user ? user.user.address?.state : ""}
-                    placeholder="State"
-                  />
-                </label>
-
-                <label>
-                  ZIP
-                  <input
-                    type="readonly"
-                    name="zipCode"
-                    defaultValue={user ? user.user.address?.zipCode : ""}
-                    placeholder="ZIP"
+                    name="phone"
+                    defaultValue={user.isLoggedIn ? user.customer.phone : ""}
+                    placeholder="(555) 555-5555"
                   />
                 </label>
               </div>
-            </fieldset>
 
-            <fieldset className="project">
-              <div className="row">
+              <fieldset className="address">
+                <legend>Address</legend>
+                <div className="row">
+                  <label>
+                    Line 1
+                    <input
+                      type="readonly"
+                      name="addressLine1"
+                      defaultValue={
+                        user.isLoggedIn ? user.customer.address?.addressLine1 : ""
+                      }
+                      placeholder="Street address"
+                    />
+                  </label>
+
+                  <label>
+                    City
+                    <input
+                      type="readonly"
+                      name="city"
+                      defaultValue={user.isLoggedIn ? user.customer.address?.city : ""}
+                      placeholder="City"
+                    />
+                  </label>
+
+                  <label>
+                    State
+                    <input
+                      type="readonly"
+                      name="state"
+                      defaultValue={user.isLoggedIn ? user.customer.address?.state : ""}
+                      placeholder="State"
+                    />
+                  </label>
+
+                  <label>
+                    ZIP
+                    <input
+                      type="readonly"
+                      name="zipCode"
+                      defaultValue={user.isLoggedIn ? user.customer.address?.zipCode : ""}
+                      placeholder="ZIP"
+                    />
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset className="project">
+                <div className="row"></div>
+              </fieldset>
+
+              <div className="form-actions">
+                <button type="submit" className="btn btn--secondary invisible">
+                  Save
+                </button>
+                <button
+                  type="button"
+                  onClick={() => console.log("Cancel")}
+                  className="btn invisible"
+                >
+                  Cancel
+                </button>
               </div>
-            </fieldset>
-
-            <div className="form-actions">
-              <button type="submit" className="btn btn--secondary invisible">
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={() => console.log("Cancel")}
-                className="btn invisible"
-              >
-                Cancel
-              </button>
+            </form>
+          </section>
+          <section></section>
+        </main>
+        <article className="user-home">
+          <header className="user-home__header">
+            <div className="user-home__welcome">
+              <h1>
+                Your Scheduled Services{" "}
+                {user.isLoggedIn
+                  ? `${user.customer.name.firstName || user.given_name}`
+                  : "User"}
+                !
+              </h1>
+              <p className="muted">Schedule your service today</p>
             </div>
-          </form>
-        </section>
-        <section></section>
-      </main>
-      <article className="user-home" >
-        <header className="user-home__header">
-          <div className="user-home__welcome">
-            <h1>
-              Your Scheduled Services{" "}
-              {user ? `${user.user.name.firstName || user.given_name}` : "User"}!
-            </h1>
-            <p className="muted">Schedule your service today</p>
-          </div>
-        </header>
-        <section
-          className="card user-home__card"
-          aria-labelledby="user-info-title"
-        >
-          <h2 id="user-info-title" className="card__title">
-            Schedule
-          </h2>
+          </header>
+          <section
+            className="card user-home__card"
+            aria-labelledby="user-info-title"
+          >
+            <h2 id="user-info-title" className="card__title">
+              Schedule
+            </h2>
 
-          <form className="user-form" onSubmit={(e) => e.preventDefault()}>
-            <div className="row"></div>
+            <form className="user-form" onSubmit={(e) => e.preventDefault()}>
+              <div className="row"></div>
 
-            <fieldset className="address">
-              <legend>Scheduled Sercive</legend>
-              <div className="row">
-                <label className="full">
-                  Service
-                  <input
-                    type="readonly"
-                    name="date"
-                    defaultValue={user ? user.user.projectDetails : ""}
-                    placeholder="No scheduled services"
-                  />
-                </label>
-              </div>
-            </fieldset>
+              <fieldset className="address">
+                <legend>Scheduled Sercive</legend>
+                <div className="row">
+                  <label className="full">
+                    Service
+                    <input
+                      type="readonly"
+                      name="date"
+                      defaultValue={user.isLoggedIn ? user.customer.projectDetails : ""}
+                      placeholder="No scheduled services"
+                    />
+                  </label>
+                </div>
+              </fieldset>
 
-            <fieldset className="project">
-              <legend>Project Details</legend>
-              <div className="row">
-                <label className="full">
-                  Project description
-                  <input
-                    type="readonly"
-                    name="projectDetails"
-                    defaultValue={user ? user.user.projectDetails : ""}
-                    placeholder="No scheduled services"
-                  />
-                </label>
+              <fieldset className="project">
+                <legend>Project Details</legend>
+                <div className="row">
+                  <label className="full">
+                    Project description
+                    <input
+                      type="readonly"
+                      name="projectDetails"
+                      defaultValue={user.isLoggedIn ? user.customer.projectDetails : ""}
+                      placeholder="No scheduled services"
+                    />
+                  </label>
 
-                <label>
-                  Scheduled date
-                  <input
-                    type="readonly"
-                    name="projectStartDate"
-                    defaultValue={user ? user.user.projectStartDate : ""}
-                    placeholder="No scheduled services"
-                  />
-                </label>
-              </div>
-            </fieldset>
+                  <label>
+                    Scheduled date
+                    <input
+                      type="readonly"
+                      name="projectStartDate"
+                      defaultValue={user.isLoggedIn ? user.customer.projectStartDate : ""}
+                      placeholder="No scheduled services"
+                    />
+                  </label>
+                </div>
+              </fieldset>
 
-            {/* <div className="form-actions">
+              {/* <div className="form-actions">
               <button type="submit" className="btn btn--secondary">Save</button>
               <button type="button" onClick={() => console.log("Cancel")} className="btn">Cancel</button>
             </div> */}
-          </form>
-        </section>
-      </article>
+            </form>
+          </section>
+        </article>
 
-      <FooterNav />
+        {/* <FooterNav /> */}
 
-      <style>{`
+        <style>{`
         .user-home {
           max-width: 1100px;
           margin: 28px auto;
@@ -332,7 +339,7 @@ export default function UserHome() {
           }
         }
       `}</style>
-    </UserContext.Provider>
+      </UserProvider>
     </>
   );
 }
